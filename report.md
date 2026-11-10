@@ -1,5 +1,7 @@
 # Text Generator Lab — one-page report
 
+**Author:** Ayoub El Houani
+
 **Problem and solution.** A small model can generate fluent-looking text without understanding it. We compare a plain POS-HMM, an HMM whose states encode sentence roles, and a trigram model. All are trained on 960 synthetic sentences and tested on 240 held-out sentences split by document. The Streamlit bench samples batches, displays hidden states or estimated tags, reports four metrics, exports CSV and tags user input with log-space Viterbi. The results describe this tiny grammar, not real English quality.
 
 **Generation at T = 1.0.** Each model generates 500 sentences with seed 42. Valid means the coarse tag pattern occurs in training; plausible means the first noun–verb pair occurs in training; novel means the exact sentence is absent from training; distinct-2 is the fraction of unique word bigrams.
