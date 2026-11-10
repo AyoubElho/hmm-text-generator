@@ -1,4 +1,7 @@
 __pycache__/
 .venv/
 *.pyc
+*.aux
+*.log
+*.out
 data/ewt/

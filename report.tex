@@ -1,0 +1,64 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=16mm]{geometry}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+\usepackage{microtype}
+\usepackage{lmodern}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{ink}{HTML}{193A52}
+\definecolor{stripe}{HTML}{EDF3F6}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+\setlength{\tabcolsep}{7pt}
+\renewcommand{\arraystretch}{1.12}
+\pagestyle{empty}
+
+\begin{document}
+{\Large\bfseries\color{ink} Text Generator Lab}\par
+\vspace{1mm}
+
+\textbf{Problem and solution.}
+A small model can generate fluent-looking text without understanding it. We compare a plain POS-HMM, a role-split POS-HMM, and a trigram. Models train on 960 synthetic sentences; 240 held-out sentences are split by document. The Streamlit test bench samples batches, shows tags, computes metrics, exports CSV, and tags input with log-space Viterbi. These metrics describe the tiny synthetic grammar, not real English quality.
+
+\textbf{Generation at $T=1.0$.}
+Each model generates 500 sentences with seed 42. A valid pattern is a coarse tag sequence seen in training; a plausible pair is a first noun--verb pair seen in training; novel means the exact sentence is absent from training. Distinct-2 is the fraction of unique adjacent word pairs.
+\begin{center}
+\rowcolors{2}{stripe}{white}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Model} & \textbf{Valid pattern} & \textbf{Plausible pair} & \textbf{Novel} & \textbf{Distinct-2} \\
+\midrule
+Plain HMM      & 16.2\%  & 14.8\% & 99.8\% & 0.198 \\
+Role-split HMM & 100.0\% & 60.6\% & 99.4\% & 0.148 \\
+Trigram        & 57.0\%  & 76.0\% & 91.2\% & 0.105 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The plain HMM reuses POS states at different positions and can combine incompatible transitions. Role-split states preserve subject, object, or prepositional roles, yielding 100\% for this sample and corpus-defined metric. Trigram tags are estimated with the role-split HMM.
+
+\textbf{Temperature.}
+For a writing toy, choose $T=1.5$ for variety; for autocomplete, choose $T=0.5$ to favour common continuations. These are heuristics, not measured autocomplete results.
+
+\textbf{Examples.}
+For the role-split HMM, seed 42 and $T=1$, ``the children eat the bread at the park .'' is a plausible novel sentence. ``the farmers eat the river by the school .'' has a valid pattern but fails in meaning: tag transitions and independent emissions do not encode semantic compatibility. Its subject--verb pair was seen, illustrating the proxy's limits.
+
+\textbf{Real data.}
+Both HMMs achieved 100\% token accuracy on the 240 held-out synthetic sentences. The same plain HMM and Viterbi on \href{https://github.com/UniversalDependencies/UD_English-EWT}{Universal Dependencies English EWT} (12,544 train / 2,077 test; CC BY-SA 4.0) produced:
+\begin{center}
+\rowcolors{2}{stripe}{white}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Model} & \textbf{Accuracy} & \textbf{Known} & \textbf{Unknown} & \textbf{Whole sentence} \\
+\midrule
+Most-frequent tag & 86.2\% & 90.8\% & 28.6\% & 31.9\% \\
+HMM + Viterbi     & 88.0\% & 92.9\% & 28.2\% & 40.4\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Unknown words account for 7.5\% of test tokens. Web text has 17 tags, many more patterns, ambiguity, and unseen words; smoothed emissions lack lexical features for unknowns. Synthetic text has six tags and a restricted grammar. State splitting improves positional structure but does not teach meaning or guarantee real-world tagging. Treebank revisions can change results.
+\end{document}

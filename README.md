@@ -26,7 +26,7 @@ python -m src.evaluate       # 500 synthetic samples per model and temperature
 python -m src.evaluate_real  # downloads UD English EWT on first run
 ```
 
-Outputs are in `results/`; the one-page report is `report.pdf`. The real-data test uses the [Universal Dependencies English EWT treebank](https://github.com/UniversalDependencies/UD_English-EWT), CC BY-SA 4.0. It downloads the training and test files into the ignored `data/ewt/` directory. Dataset revisions can change results.
+Outputs are in `results/`; the one-page report is `report.pdf`, generated from the editable LaTeX source `report.tex` with `pdflatex report.tex` (run twice to update links). The real-data test uses the [Universal Dependencies English EWT treebank](https://github.com/UniversalDependencies/UD_English-EWT), CC BY-SA 4.0. It downloads the training and test files into the ignored `data/ewt/` directory. Dataset revisions can change results.
 
 ## Deploy on Streamlit Community Cloud
 
